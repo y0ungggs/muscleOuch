@@ -174,6 +174,10 @@ df["created_at_ymd"] = pd.to_datetime(df["created_at_ymd"]).dt.date
 # 날짜 필터
 start_date = st.date_input("시작 날짜", df["created_at_ymd"].min())
 end_date = st.date_input("종료 날짜", df["created_at_ymd"].max())
+
+st.write(type(df["created_at_ymd"].iloc[0]))  # datetime.date여야 함
+st.write(type(start_date))  # datetime.date여야 함
+
 df_filtered = df[(df["created_at_ymd"] >= start_date) & (df["created_at_ymd"] <= end_date)]
 
 # 팀별 게시글 수 누적 시계열
