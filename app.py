@@ -8,7 +8,10 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 import streamlit as st
 import plotly.express as px
-
+from wordcloud import WordCloud
+from collections import Counter
+import ast
+import os
 
 
 client_id = '451309640'
@@ -173,13 +176,78 @@ st.title("💪 팀별 / 개인별 운동 게시글 분석")
 df["created_at_ymd"] = pd.to_datetime(df["created_at_ymd"]).dt.date
 
 # 날짜 필터
+st.sidebar.header("📅 날짜 필터")
 start_date = st.date_input("시작 날짜", df["created_at_ymd"].min())
 end_date = st.date_input("종료 날짜", df["created_at_ymd"].max())
-
-st.write(type(df["created_at_ymd"].iloc[0]))  # datetime.date여야 함
-st.write(type(start_date))  # datetime.date여야 함
-
 df_filtered = df[(df["created_at_ymd"] >= start_date) & (df["created_at_ymd"] <= end_date)]
+
+analysis_option = st.sidebar.selectbox("📊 분석 항목 선택", [
+    "키워드 워드클라우드",
+    "팀별 게시글 수 추이",
+    "개인별 게시글 수",
+    "인기 게시글 TOP5",
+    "요일별 활동",
+    "개인 필터링 활동 내역",
+])
+
+# 요일별 활동
+if analysis_option == "요일별 활동":
+    st.subheader("📆 요일별 게시글 활동")
+    df_filtered["weekday"] = pd.to_datetime(df_filtered["created_at"]).dt.day_name()
+    weekday_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    weekday_counts = df_filtered['weekday'].value_counts().reindex(weekday_order).fillna(0)
+    fig = px.bar(
+        weekday_counts,
+        x=weekday_counts.index,
+        y=weekday_counts.values,
+        labels={"x": "요일", "y": "게시글 수"},
+        title="요일별 게시글 수"
+    )
+    st.plotly_chart(fig)
+
+# 개인 필터링 활동 내역
+elif analysis_option == "개인 필터링 활동 내역":
+    st.subheader("🙋‍♀️ 특정 사용자 활동 내역")
+    selected_user = st.selectbox("사용자 선택", sorted(df_filtered["author_name"].unique()))
+    user_df = df_filtered[df_filtered["author_name"] == selected_user]
+
+    if user_df.empty:
+        st.write("선택한 사용자의 데이터가 없습니다.")
+    else:
+        daily_counts = user_df.groupby("created_at_ymd").size().reset_index(name="post_count")
+        fig = px.line(
+            daily_counts,
+            x="created_at_ymd",
+            y="post_count",
+            title=f"{selected_user}님의 일별 게시글 수"
+        )
+        st.plotly_chart(fig)
+
+# 키워드 워드클라우드
+elif analysis_option == "키워드 워드클라우드":
+    st.subheader("☁️ 운동 키워드 워드클라우드")
+    keyword_list = []
+
+    for text in df_filtered['content'].dropna():
+        words = text.split()
+        for word in words:
+            for keyword in target_keywords:
+                if keyword in word:
+                    keyword_list.append(keyword)
+
+    if keyword_list:
+        counter = Counter(keyword_list)
+        wordcloud = WordCloud(font_path=None, background_color='white', width=800, height=400).generate_from_frequencies(counter)
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.imshow(wordcloud, interpolation='bilinear')
+        ax.axis("off")
+        st.pyplot(fig)
+    else:
+        st.write("운동 관련 키워드가 포함된 게시글이 없습니다.")
+
+
+
 
 # 팀별 게시글 수 누적 시계열
 st.subheader("📈 팀별 누적 게시글 수")
