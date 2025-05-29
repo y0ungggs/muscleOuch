@@ -165,7 +165,7 @@ df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
 
 # 날짜 컬럼이 없으면 생성
 if "created_at_ymd" not in df.columns:
-    df["created_at_ymd"] = df["created_at"].dt.date
+    df["created_at_ymd"] = pd.to_datetime(df["created_at"]).dt.date
 
 st.title("💪 팀별 / 개인별 운동 게시글 분석")
 
