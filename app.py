@@ -217,8 +217,6 @@ user_list = df_filtered["author_name"].unique().tolist()
 selected_user = st.selectbox("사용자 선택", options=user_list)
 
 user_df = df_filtered[df_filtered["author_name"] == selected_user]
-
-selected_user = df_filtered["author_name"].iloc[0] if not user_df.empty else None
 if selected_user:
     user_df = df_filtered[df_filtered["author_name"] == selected_user]
     daily_counts = user_df.groupby("created_at_ymd").size().reset_index(name="post_count")
@@ -231,7 +229,7 @@ else:
 st.subheader("☁️ 운동 키워드 워드클라우드")
 
 # matplotlib 한글 폰트 설정
-fontprop = fm.FontProperties(fname=font_path).get_name()
+fontprop = font_manager.FontProperties(fname=font_path).get_name()
 plt.rcParams['font.family'] = fontprop
 
 keyword_list = []
