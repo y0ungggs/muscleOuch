@@ -1,9 +1,5 @@
 pandas
 numpy
-json
 requests
-urllib
 streamlit
-pandas
 matplotlib
-time
