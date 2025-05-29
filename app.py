@@ -13,7 +13,7 @@ from collections import Counter
 import ast
 import os
 
-font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'malgun.ttf')
+font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Pretendard-Light.ttf')
 
 client_id = '451309640'
 secret_key = 'yFJK6UIU0K1QKHWEPgfkDG4p3WCN7njG'
