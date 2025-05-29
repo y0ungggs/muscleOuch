@@ -212,8 +212,13 @@ fig2 = px.bar(weekday_counts, x=weekday_counts.index, y=weekday_counts.values, l
 st.plotly_chart(fig2)
 
 # 개인 필터링 활동 내역 (예시로 첫 사용자)
-st.subheader("🙋‍♀️ 특정 사용자 활동 내역")
-selected_user = df_filtered["author_name"].iloc[0] if not df_filtered.empty else None
+st.subheader("🙋‍♀️ 사용자별 활동 내역")
+user_list = df_filtered["author_name"].unique().tolist()
+selected_user = st.selectbox("사용자 선택", options=user_list)
+
+user_df = df_filtered[df_filtered["author_name"] == selected_user]
+
+selected_user = df_filtered["author_name"].iloc[0] if not user_df.empty else None
 if selected_user:
     user_df = df_filtered[df_filtered["author_name"] == selected_user]
     daily_counts = user_df.groupby("created_at_ymd").size().reset_index(name="post_count")
@@ -224,6 +229,11 @@ else:
 
 # 키워드 워드클라우드
 st.subheader("☁️ 운동 키워드 워드클라우드")
+
+# matplotlib 한글 폰트 설정
+fontprop = fm.FontProperties(fname=font_path).get_name()
+plt.rcParams['font.family'] = fontprop
+
 keyword_list = []
 for text in df_filtered['content'].dropna():
     words = text.split()
@@ -233,7 +243,7 @@ for text in df_filtered['content'].dropna():
                 keyword_list.append(keyword)
 if keyword_list:
     counter = Counter(keyword_list)
-    wordcloud = WordCloud(font_path=None, background_color='white', width=800, height=400).generate_from_frequencies(counter)
+    wordcloud = WordCloud(font_path=font_path, background_color='white', width=800, height=400).generate_from_frequencies(counter)
     fig4, ax = plt.subplots(figsize=(10, 5))
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
