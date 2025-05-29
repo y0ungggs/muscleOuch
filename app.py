@@ -14,6 +14,8 @@ import ast
 import os
 
 font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Pretendard-Light.ttf')
+st.write("폰트 경로:", font_path)
+
 
 client_id = '451309640'
 secret_key = 'yFJK6UIU0K1QKHWEPgfkDG4p3WCN7njG'
