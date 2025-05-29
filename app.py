@@ -7,6 +7,7 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 import streamlit as st
+import plotly.express as px
 
 
 
