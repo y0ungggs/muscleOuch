@@ -33,8 +33,8 @@ df["요일"] = df["날짜"].dt.dayofweek.map(
 # 예: df.rename(columns={"팀명_컬럼명": "팀명", "이름_컬럼명": "이름"}, inplace=True)
 
 total_certifications = len(df)
-first_date = df["작성일"].min().date()
-last_date = df["작성일"].max().date()
+first_date = df["날짜"].min().date()
+last_date = df["날짜"].max().date()
 st.markdown(f"**2025년 제1회 운동 인증회 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회**")
 
 
