@@ -94,6 +94,7 @@ st.plotly_chart(fig4)
 
 # --------------------------------------------------
 # 7. 사용자별 활동 내역 (이름 필터링)
+st.subheader("7. 전체 사용자 누적 인증 내역")
 
 df_user_daily = df.groupby(["이름", "날짜"])["인증"].sum().reset_index()
 df_user_daily["누적인증"] = df_user_daily.groupby("이름")["인증"].cumsum()
