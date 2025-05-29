@@ -68,7 +68,7 @@ df_person = df_person.sort_values("순위")
 
 def highlight_top_50(row):
     if row["인증"] >= 50:
-        return ['background-color: #fff9c4']*len(row)
+        return ['background-color: #A7D2CB; color: black']*len(row)
     else:
         return ['']*len(row)
 
@@ -94,7 +94,23 @@ st.plotly_chart(fig4)
 
 # --------------------------------------------------
 # 7. 사용자별 활동 내역 (이름 필터링)
-st.subheader("7. 사용자별 인증 내역")
+
+df_user_daily = df.groupby(["이름", "날짜"])["인증"].sum().reset_index()
+df_user_daily["누적인증"] = df_user_daily.groupby("이름")["인증"].cumsum()
+
+fig7_all = px.line(
+    df_user_daily,
+    x="날짜",
+    y="누적인증",
+    color="이름",
+    title="전체 사용자 누적 인증 그래프",
+    labels={"누적인증": "누적 인증 횟수"},
+)
+fig7_all.update_yaxes(dtick=1, tickformat=".0f")  # y축 소수점 제거
+st.plotly_chart(fig7_all, use_container_width=True)
+
+
+st.subheader("8. 사용자별 인증 내역")
 users = df["이름"].unique()
 selected_user = st.selectbox("사용자 선택", users)
 user_df = df[df["이름"] == selected_user]
@@ -126,7 +142,7 @@ st.plotly_chart(fig6)
 
 # --------------------------------------------------
 # 10. 연속 운동일 Top 5
-st.subheader("10. 연속 운동 기록 상위 5명")
+st.subheader("10. 연속일수 운동 인증 상위 5명")
 df_sorted = df.sort_values(["이름", "날짜"])
 df_sorted["이전날짜"] = df_sorted.groupby("이름")["날짜"].shift()
 df_sorted["연속일"] = df_sorted["날짜"] - df_sorted["이전날짜"]
