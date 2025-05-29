@@ -17,7 +17,7 @@ font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Pretendard-Light.t
 # st.write("폰트 경로:", font_path)
 
 file_url = 'https://github.com/y0ungggs/muscleOuch/blob/main/data/%EC%A0%9C1%ED%9A%8C%20%EC%9A%B4%EB%8F%99%EC%9D%B8%EC%A6%9D%ED%9A%8C_%EA%B2%B0%EA%B3%BC(%EB%B3%80%ED%99%98).xlsx'
-df = pd.read_excel(file_url)
+df = pd.read_excel(file_url, engine='openpyxl')
 
 
 st.title("🏅 제1회 운동인증회 분석")
