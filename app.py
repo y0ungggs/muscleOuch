@@ -20,20 +20,29 @@ file_url = 'https://github.com/y0ungggs/muscleOuch/raw/main/data/%EC%A0%9C1%ED%9
 df = pd.read_excel(file_url, engine='openpyxl')
 
 
-st.title("🏅 제1회 운동인증회 분석")
+st.title("🏅 2025년 제1회 운동인증회 분석")
 
 # --- 데이터 전처리 예시 ---
 # 날짜 컬럼 datetime 변환
 df["날짜"] = pd.to_datetime(df["날짜"])
+df["요일"] = df["날짜"].dt.dayofweek.map(
+    {0: "월", 1: "화", 2: "수", 3: "목", 4: "금", 5: "토", 6: "일"}
+)
 
 # 팀명과 이름 컬럼은 상황에 맞게 이름 바꾸기
 # 예: df.rename(columns={"팀명_컬럼명": "팀명", "이름_컬럼명": "이름"}, inplace=True)
+
+total_certifications = len(df)
+first_date = df["작성일"].min().date()
+last_date = df["작성일"].max().date()
+st.markdown(f"**2025년 제1회 운동 인증회 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회**")
+
 
 # --------------------------------------------------
 # 1. 팀별 누적 인증 횟수 그래프
 st.subheader("1. 팀별 누적 인증 횟수")
 team_counts = df.groupby("팀")["인증"].sum().reset_index()
-fig1 = px.bar(team_counts, x="팀", y="인증", title="팀별 누적 인증 횟수")
+fig1 = px.bar(team_counts, x="팀", y="인증", title="팀별 누적 인증 횟수", labels={"인증": "횟수"})
 st.plotly_chart(fig1)
 
 # --------------------------------------------------
@@ -59,7 +68,7 @@ df_person = df_person.sort_values("순위")
 
 def highlight_top_50(row):
     if row["인증"] >= 50:
-        return ['background-color: yellow']*len(row)
+        return ['background-color: #fff9c4']*len(row)
     else:
         return ['']*len(row)
 
@@ -68,15 +77,14 @@ st.dataframe(df_person.style.apply(highlight_top_50, axis=1))
 # --------------------------------------------------
 # 5. 요일별 인증 횟수
 st.subheader("5. 요일별 인증 횟수")
-df["요일"] = df["날짜"].dt.day_name()  # 한글 요일로 변환하려면 별도 처리 필요
-weekday_counts = df.groupby("요일")["인증"].sum().reindex(
-    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]).reset_index()
+weekday_order = ["월", "화", "수", "목", "금", "토", "일"]
+weekday_counts = df.groupby("요일")["인증"].sum().reindex(weekday_order).reset_index()
 fig3 = px.bar(weekday_counts, x="요일", y="인증", title="요일별 인증 횟수")
 st.plotly_chart(fig3)
 
 # --------------------------------------------------
 # 6. 팀별 활동 내역 (팀명 필터링)
-st.subheader("6. 팀별 활동 내역")
+st.subheader("6. 팀별 인증 내역")
 teams = df["팀"].unique()
 selected_team = st.selectbox("팀 선택", teams)
 team_df = df[df["팀"] == selected_team]
@@ -86,12 +94,13 @@ st.plotly_chart(fig4)
 
 # --------------------------------------------------
 # 7. 사용자별 활동 내역 (이름 필터링)
-st.subheader("7. 사용자별 활동 내역")
+st.subheader("7. 사용자별 인증 내역")
 users = df["이름"].unique()
 selected_user = st.selectbox("사용자 선택", users)
 user_df = df[df["이름"] == selected_user]
-user_daily = user_df.groupby("날짜")["인증"].sum().reset_index()
-fig5 = px.line(user_daily, x="날짜", y="인증", title=f"{selected_user}님의 일별 인증 횟수")
+user_daily = user_df.groupby("날짜")["인증"].sum().cumsum().reset_index(name="누적인증")
+fig5 = px.line(user_daily, x="날짜", y="누적인증", title=f"{selected_user}님의 누적 인증 그래프")
+fig5.update_yaxes(tickformat="d")
 st.plotly_chart(fig5)
 
 # --------------------------------------------------
@@ -110,11 +119,23 @@ st.plotly_chart(fig5)
 # --------------------------------------------------
 # 9. 추가 분석 제안: 월별 인증 추이
 st.subheader("9. 월별 인증 추이")
-df["월"] = df["날짜"].dt.to_period("M")
-monthly_counts = df.groupby("월")["인증"].sum().reset_index()
-monthly_counts["월"] = monthly_counts["월"].astype(str)
-fig6 = px.line(monthly_counts, x="월", y="인증", title="월별 인증 횟수 추이")
+df["말일"] = df["날짜"].dt.to_period("M").dt.to_timestamp("M")
+monthly = df.groupby(df["말일"].dt.strftime("%-m월"))["인증"].sum().reset_index()
+fig6 = px.line(monthly, x="말일", y="인증", title="월별 인증 추이", markers=True)
 st.plotly_chart(fig6)
+
+# --------------------------------------------------
+# 10. 연속 운동일 Top 5
+st.subheader("10. 연속 운동 기록 상위 5명")
+df_sorted = df.sort_values(["이름", "날짜"])
+df_sorted["이전날짜"] = df_sorted.groupby("이름")["날짜"].shift()
+df_sorted["연속일"] = df_sorted["날짜"] - df_sorted["이전날짜"]
+df_sorted["연속시작"] = df_sorted["연속일"].dt.days.ne(1)
+df_sorted["연속그룹"] = df_sorted.groupby("이름")["연속시작"].cumsum()
+연속_집계 = df_sorted.groupby(["이름", "연속그룹"]).size().reset_index(name="연속일수")
+연속_최대 = 연속_집계.groupby("이름")["연속일수"].max().reset_index()
+연속_최대 = 연속_최대.sort_values("연속일수", ascending=False).head(5)
+st.dataframe(연속_최대)
 
 
 
