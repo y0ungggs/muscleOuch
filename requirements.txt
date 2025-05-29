@@ -4,3 +4,5 @@ requests
 streamlit
 matplotlib
 plotly
+wordcloud
+collections
