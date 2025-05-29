@@ -169,6 +169,8 @@ if "created_at_ymd" not in df.columns:
 
 st.title("💪 팀별 / 개인별 운동 게시글 분석")
 
+df["created_at_ymd"] = pd.to_datetime(df["created_at_ymd"]).dt.date
+
 # 날짜 필터
 start_date = st.date_input("시작 날짜", df["created_at_ymd"].min())
 end_date = st.date_input("종료 날짜", df["created_at_ymd"].max())
