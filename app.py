@@ -134,8 +134,8 @@ def fetch_band_posts(client_id, secret_key, access_token, redirect_url, band_key
 df = fetch_band_posts(client_id, secret_key, access_token, redirect_url, band_key, max_pages)
 df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')
 
-new_column_order = ['author_name', 'content', 'comment_count', 'created_at', 'photo_url','emotion_count', 'created_at_ymd', 'team_name', 'nouns']
-df = df[new_column_order]
+# new_column_order = ['author_name', 'content', 'comment_count', 'created_at', 'photo_url','emotion_count', 'created_at_ymd', 'team_name', 'nouns']
+# df = df[new_column_order]
 
 
 #
