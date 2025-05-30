@@ -72,15 +72,15 @@ with tab1:
     with st.expander("📋 개인별 인증 표 보기"):
         st.dataframe(df_person)
 
-    st.subheader("3️⃣ 날짜별 팀별 인증 추이")
+    st.subheader("3️⃣ 날짜별 팀별 누적 인증 추이")
     team_daily_counts = df.groupby(["날짜", "팀"])["인증"].sum().reset_index()
-    fig3 = px.line(
+    fig3 = px.area(
         team_daily_counts,
         x="날짜",
         y="인증",
         color="팀",
         markers=True,
-        title="날짜별 팀별 인증 횟수 추이",
+        title="날짜별 팀별 인증 누적 횟수 추이",
         labels={"날짜": "날짜", "인증": "인증 횟수", "팀": "팀"}
     )
     st.plotly_chart(fig3, use_container_width=True)
