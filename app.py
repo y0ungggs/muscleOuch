@@ -110,11 +110,11 @@ with tab2:
     st.plotly_chart(fig4, use_container_width=True)
 
     st.subheader("7️⃣ 일자별 인증 횟수 Top 10")
-    date_counts = df.groupby("날짜")["인증"].count().reset_index().sort_values("인증", ascending=False)
-    date_counts["요일"] = date_counts["날짜"].dt.day_name(locale='ko_KR')
+    date_counts = df.groupby(["날짜", "요일"])["인증"].count().reset_index().sort_values("인증", ascending=False)
+    daily_counts = df.groupby("날짜")["인증"].count().reset_index()
 
     fig_date = px.bar(
-        df.groupby("날짜")["인증"].count().reset_index(),
+        daily_counts,
         x="날짜", y="인증",
         title="일자별 인증 횟수",
         labels={"날짜": "일자", "인증": "인증 수"}
