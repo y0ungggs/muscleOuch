@@ -166,6 +166,14 @@ fig8 = px.histogram(user_counts, x="인증", nbins=20, marginal="rug",
                     labels={"인증": "인증 횟수", "count": "사용자 수"},
                     color_discrete_sequence=["#4A90E2"])
 
+mean_val = user_counts["인증"].mean()
+median_val = user_counts["인증"].median()
+
+fig8.add_vline(x=mean_val, line_dash="dash", line_color="red",
+               annotation_text="평균", annotation_position="top right")
+fig8.add_vline(x=median_val, line_dash="dot", line_color="green",
+               annotation_text="중앙값", annotation_position="bottom right")
+
 st.plotly_chart(fig8)
 
 
