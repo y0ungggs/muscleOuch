@@ -166,8 +166,7 @@ with tab4:
         name_filter = st.text_input("이름으로 필터링", "")
         
         if name_filter.strip():
-        filtered_df = df[df["이름"].str.contains(name_filter.strip(), case=False, na=False)]
-        
+            filtered_df = df[df["이름"].str.contains(name_filter.strip(), case=False, na=False)]
         else:
             filtered_df = df
             
