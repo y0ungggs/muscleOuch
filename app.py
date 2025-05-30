@@ -35,7 +35,7 @@ first_date = df["날짜"].min().date()
 last_date = df["날짜"].max().date()
 
 st.write(f"🔹 기간 : {first_date} ~ {last_date}")
-st.write(f"🔹 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회")
+st.write(f"🔹 전체 인증 횟수: {total_certifications:,}회")
 st.write(f"🔹 평균 인증 횟수: {mean_count:.2f}회")
 st.write(f"🔹 표준편차: {std_count:.2f}")
 
