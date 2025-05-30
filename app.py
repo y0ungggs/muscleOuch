@@ -22,8 +22,8 @@ df = pd.read_excel(file_url, engine='openpyxl')
 
 st.title("🏅 2025년 제1회 운동인증회 분석")
 
-# 사용자별 인증 통계 요약
-st.subheader("📊 사용자 인증 통계 요약")
+# 동호회원별 인증 통계 요약
+st.subheader("📊 동호회원 인증 통계 요약")
 
 user_counts = df.groupby("이름")["인증"].sum().reset_index()
 mean_count = user_counts["인증"].mean()
@@ -64,7 +64,7 @@ df_person = df.groupby(["팀", "이름"])["인증"].sum().reset_index()
 df_person = df_person.sort_values(["팀", "인증"], ascending=[True, False])
 fig2 = px.bar(df_person, x="이름", y="인증", color="팀",
               title="개인별 누적 인증 횟수", 
-              labels={"이름": "사용자", "인증": "누적 인증 횟수"})
+              labels={"이름": "동호회원", "인증": "누적 인증 횟수"})
 st.plotly_chart(fig2)
 
 # --------------------------------------------------
@@ -105,8 +105,8 @@ fig4 = px.line(team_daily, x="날짜", y="인증", title=f"{selected_team} 팀�
 st.plotly_chart(fig4)
 
 # --------------------------------------------------
-# 7. 사용자별 활동 내역 (이름 필터링)
-st.subheader("7. 전체 사용자 누적 인증 내역")
+# 7. 동호회원별 활동 내역 (이름 필터링)
+st.subheader("7. 전체 동호회원 누적 인증 내역")
 
 df_user_daily = df.groupby(["이름", "날짜"])["인증"].sum().reset_index()
 df_user_daily["누적인증"] = df_user_daily.groupby("이름")["인증"].cumsum()
@@ -116,16 +116,16 @@ fig7_all = px.line(
     x="날짜",
     y="누적인증",
     color="이름",
-    title="전체 사용자 누적 인증 그래프",
+    title="전체 동호회원 누적 인증 그래프",
     labels={"누적인증": "누적 인증 횟수"},
 )
 fig7_all.update_yaxes(dtick=1, tickformat=".0f")  # y축 소수점 제거
 st.plotly_chart(fig7_all, use_container_width=True)
 
 
-st.subheader("8. 사용자별 인증 내역")
+st.subheader("8. 동호회원별 인증 내역")
 users = df["이름"].unique()
-selected_user = st.selectbox("사용자 선택", users)
+selected_user = st.selectbox("동호회원 선택", users)
 user_df = df[df["이름"] == selected_user]
 user_daily = user_df.groupby("날짜")["인증"].sum().cumsum().reset_index(name="누적인증")
 fig5 = px.line(user_daily, x="날짜", y="누적인증", title=f"{selected_user}님의 누적 인증 그래프")
@@ -167,14 +167,14 @@ df_sorted["연속그룹"] = df_sorted.groupby("이름")["연속시작"].cumsum()
 st.dataframe(연속_최대)
 
 # --------------------------------------------------
-# 8. 사용자별 인증 횟수 분포
-st.subheader("11. 사용자별 인증 횟수 분포")
+# 8. 동호회원별 인증 횟수 분포
+st.subheader("11. 동호회원별 인증 횟수 분포")
 
 user_counts = df.groupby("이름")["인증"].sum().reset_index()
 
 fig8 = px.histogram(user_counts, x="인증", nbins=20, marginal="rug",
-                    title="사용자별 인증 횟수 분포 (히스토그램)",
-                    labels={"인증": "인증 횟수", "count": "사용자 수"},
+                    title="동호회원별 인증 횟수 분포 (히스토그램)",
+                    labels={"인증": "인증 횟수", "count": "동호회원 수"},
                     color_discrete_sequence=["#4A90E2"])
 
 mean_val = user_counts["인증"].mean()
@@ -191,30 +191,30 @@ st.plotly_chart(fig8)
 # Z-score 계산
 user_counts["z_score"] = (user_counts["인증"] - mean_count) / std_count
 
-# z-score가 높은 순으로 상위 사용자 정렬
+# z-score가 높은 순으로 상위 동호회원 정렬
 top_z = user_counts.sort_values("z_score", ascending=False)
-st.subheader("🔥 Z-score 기준 상위 사용자 TOP 5")
+st.subheader("🔥 Z-score 기준 상위 동호회원 TOP 5")
 st.dataframe(top_z.head(5)[["이름", "인증", "z_score"]])
 
 fig_z = px.bar(top_z.head(10), x="이름", y="z_score",
                color="z_score",
                color_continuous_scale="blues",
-               title="Z-score 상위 사용자 TOP 10",
-               labels={"z_score": "Z-score", "이름": "사용자"})
+               title="Z-score 상위 동호회원 TOP 10",
+               labels={"z_score": "Z-score", "이름": "동호회원"})
 
 st.plotly_chart(fig_z)
 
 
 # --------------------------------------------------
-# 팀별 사용자 인증 횟수 Boxplot
-st.subheader("📦 팀별 사용자 인증 횟수 Boxplot")
+# 팀별 동호회원 인증 횟수 Boxplot
+st.subheader("📦 팀별 동호회원 인증 횟수 Boxplot")
 
-# 사용자별 인증 횟수 데이터가 있어야 함
+# 동호회원별 인증 횟수 데이터가 있어야 함
 user_counts = df.groupby(["팀", "이름"])["인증"].sum().reset_index()
 
 fig_box = px.box(user_counts, x="팀", y="인증", points="all", color="팀",
-                 title="팀별 사용자 인증 횟수 분포 (Boxplot)",
-                 labels={"팀": "팀", "인증": "사용자별 인증 횟수"})
+                 title="팀별 동호회원 인증 횟수 분포 (Boxplot)",
+                 labels={"팀": "팀", "인증": "동호회원별 인증 횟수"})
 
 st.plotly_chart(fig_box)
 
