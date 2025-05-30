@@ -154,7 +154,18 @@ df_sorted["연속그룹"] = df_sorted.groupby("이름")["연속시작"].cumsum()
 연속_최대 = 연속_최대.sort_values("연속일수", ascending=False).head(5)
 st.dataframe(연속_최대)
 
+# --------------------------------------------------
+# 8. 사용자별 인증 횟수 분포
+st.subheader("11. 사용자별 인증 횟수 분포")
 
+user_counts = df.groupby("이름")["인증"].sum().reset_index()
+
+fig8, ax = plt.subplots()
+sns.histplot(user_counts["인증"], kde=True, bins=10, ax=ax, color="#4A90E2")
+ax.set_title("인증 횟수 분포 (히스토그램 + KDE)")
+ax.set_xlabel("인증 횟수")
+ax.set_ylabel("사용자 수")
+st.pyplot(fig8)
 
 
 
