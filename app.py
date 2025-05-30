@@ -97,6 +97,11 @@ with tab2:
 # -----------------------------------
 # 👥 탭 3: 사용자 중심 분석
 with tab3:
+    st.subheader("8️⃣ 개인 인증 순위")
+    df_person["순위"] = df_person["인증"].rank(method="dense", ascending=False).astype(int)
+    df_person = df_person.sort_values("순위")
+    st.dataframe(df_person.style.apply(lambda row: ['background-color: #A7D2CB']*len(row) if row["인증"] >= 50 else ['']*len(row), axis=1))
+    
     st.subheader("6️⃣ 전체 동호회원 누적 인증")
     df_user_daily = df.groupby(["이름", "날짜"])["인증"].sum().reset_index()
     df_user_daily["누적인증"] = df_user_daily.groupby("이름")["인증"].cumsum()
@@ -114,11 +119,6 @@ with tab3:
 # -----------------------------------
 # 📈 탭 4: 심화 통계
 with tab4:
-    st.subheader("8️⃣ 개인 인증 순위")
-    df_person["순위"] = df_person["인증"].rank(method="dense", ascending=False).astype(int)
-    df_person = df_person.sort_values("순위")
-    st.dataframe(df_person.style.apply(lambda row: ['background-color: #A7D2CB']*len(row) if row["인증"] >= 50 else ['']*len(row), axis=1))
-
     st.subheader("9️⃣ 인증 횟수 분포")
     fig8 = px.histogram(user_counts, x="인증", nbins=20, marginal="rug", title="인증 횟수 분포")
     fig8.add_vline(x=mean_count, line_dash="dash", line_color="red", annotation_text="평균")
