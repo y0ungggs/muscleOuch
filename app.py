@@ -109,22 +109,36 @@ with tab2:
     fig4 = px.line(team_daily, x="날짜", y="인증", title=f"{selected_team} 팀의 일별 인증")
     st.plotly_chart(fig4, use_container_width=True)
 
+    st.subheader("7️⃣ 일자별 인증 횟수 Top 10")
+    date_counts = df.groupby("날짜")["인증"].count().reset_index().sort_values("인증", ascending=False)
+
+    fig_date = px.bar(
+        df.groupby("날짜")["인증"].count().reset_index(),
+        x="날짜", y="인증",
+        title="일자별 인증 횟수",
+        labels={"날짜": "일자", "인증": "인증 수"}
+    )
+    st.plotly_chart(fig_date, use_container_width=True)
+
+    with st.expander("📅 인증이 가장 많았던 날 Top 10"):
+        st.dataframe(date_counts.head(10).reset_index(drop=True))
+
 # -----------------------------------
 # 👥 탭 3: 사용자 중심 분석
 with tab3:
-    st.subheader("7️⃣ 개인 인증 순위")
+    st.subheader("8️⃣ 개인 인증 순위")
     df_person["순위"] = df_person["인증"].rank(method="dense", ascending=False).astype(int)
     df_person = df_person.sort_values("순위")
     st.dataframe(df_person.style.apply(lambda row: ['background-color: #A7D2CB']*len(row) if row["인증"] >= 50 else ['']*len(row), axis=1))
     
-    st.subheader("8️⃣ 전체 동호회원 누적 인증")
+    st.subheader("9️⃣ 전체 동호회원 누적 인증")
     df_user_daily = df.groupby(["이름", "날짜"])["인증"].sum().reset_index()
     df_user_daily["누적인증"] = df_user_daily.groupby("이름")["인증"].cumsum()
     fig7_all = px.line(df_user_daily, x="날짜", y="누적인증", color="이름", title="동호회원 누적 인증")
     fig7_all.update_yaxes(dtick=1)
     st.plotly_chart(fig7_all, use_container_width=True)
 
-    st.subheader("9️⃣ 동호회원별 누적 인증 (선택)")
+    st.subheader("🔟 동호회원별 누적 인증 (선택)")
     selected_user = st.selectbox("동호회원 선택", df["이름"].unique())
     user_df = df[df["이름"] == selected_user]
     user_daily = user_df.groupby("날짜")["인증"].sum().cumsum().reset_index(name="누적인증")
@@ -134,13 +148,13 @@ with tab3:
 # -----------------------------------
 # 📈 탭 4: 심화 통계
 with tab4:
-    st.subheader("🔟 인증 횟수 분포")
+    st.subheader("1️⃣1️⃣ 인증 횟수 분포")
     fig8 = px.histogram(user_counts, x="인증", nbins=20, marginal="rug", title="인증 횟수 분포")
     fig8.add_vline(x=mean_count, line_dash="dash", line_color="red", annotation_text="평균")
     fig8.add_vline(x=user_counts["인증"].median(), line_dash="dot", line_color="green", annotation_text="중앙값")
     st.plotly_chart(fig8, use_container_width=True)
 
-    st.subheader("1️⃣1️⃣ Z-score 기준 상위 동호회원")
+    st.subheader("1️⃣2️⃣ Z-score 기준 상위 동호회원")
     user_counts["z_score"] = (user_counts["인증"] - mean_count) / std_count
     top_z = user_counts.sort_values("z_score", ascending=False)
     st.dataframe(top_z.head(5)[["이름", "인증", "z_score"]])
@@ -148,7 +162,7 @@ with tab4:
     fig_z = px.bar(top_z.head(10), x="이름", y="z_score", color="z_score", color_continuous_scale="blues", title="Z-score 상위 10인")
     st.plotly_chart(fig_z, use_container_width=True)
 
-    st.subheader("1️⃣2️⃣ 연속 인증일 Top 5")
+    st.subheader("1️⃣3️⃣ 연속 인증일 Top 5")
     df_sorted = df.sort_values(["이름", "날짜"])
     df_sorted["이전날짜"] = df_sorted.groupby("이름")["날짜"].shift()
     df_sorted["연속일"] = df_sorted["날짜"] - df_sorted["이전날짜"]
@@ -158,7 +172,7 @@ with tab4:
     연속_최대 = 연속_집계.groupby("이름")["연속일수"].max().reset_index().sort_values("연속일수", ascending=False).head(5)
     st.dataframe(연속_최대)
 
-    st.subheader("1️⃣3️⃣ 팀별 Boxplot")
+    st.subheader("1️⃣4️⃣ 팀별 Boxplot")
     user_counts = df.groupby(["팀", "이름"])["인증"].count().reset_index()
     fig_box = px.box(user_counts, x="팀", y="인증", points="all", color="팀", title="팀별 인증 분포")
     st.plotly_chart(fig_box, use_container_width=True)
