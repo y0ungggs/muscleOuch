@@ -74,6 +74,8 @@ with tab1:
 
     st.subheader("3️⃣ 날짜별 팀별 누적 인증 추이")
     team_daily_counts = df.groupby(["날짜", "팀"])["인증"].sum().reset_index()
+    team_daily_counts["누적인증"] = team_daily_counts.groupby("팀")["인증"].cumsum()
+    
     fig3 = px.line(
         team_daily_counts,
         x="날짜",
