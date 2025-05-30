@@ -30,9 +30,13 @@ mean_count = user_counts["인증"].mean()
 std_count = user_counts["인증"].std()
 var_count = user_counts["인증"].var()
 
+total_certifications = len(df)
+first_date = df["날짜"].min().date()
+last_date = df["날짜"].max().date()
+
 st.write(f"🔹 평균 인증 횟수: {mean_count:.2f}회")
 st.write(f"🔹 표준편차: {std_count:.2f}")
-st.write(f"🔹 분산: {var_count:.2f}")
+st.write(f"🔹 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회")
 
 # --- 데이터 전처리 예시 ---
 # 날짜 컬럼 datetime 변환
@@ -44,9 +48,8 @@ df["요일"] = df["날짜"].dt.dayofweek.map(
 # 팀명과 이름 컬럼은 상황에 맞게 이름 바꾸기
 # 예: df.rename(columns={"팀명_컬럼명": "팀명", "이름_컬럼명": "이름"}, inplace=True)
 
-total_certifications = len(df)
-first_date = df["날짜"].min().date()
-last_date = df["날짜"].max().date()
+
+
 st.markdown(f"**2025년 제1회 운동 인증회 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회**")
 
 
