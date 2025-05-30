@@ -31,7 +31,9 @@ var_count = user_counts["인증"].var()
 
 total_certifications = len(df)
 first_date = df["날짜"].min().date()
+formatted_first_date = first_date.strftime("%Y-%m-%d")
 last_date = df["날짜"].max().date()
+formatted_last_date = last_date.strftime("%Y-%m-%d")
 
 # -----------------------------------
 # 🏅 타이틀
@@ -41,8 +43,8 @@ st.title("🏅 2025년 제1회 운동인증회 결과")
 # 📌 개요 정보
 with st.expander("📍 기간 및 요약 통계 보기", expanded=True):
     col1, col2, col3 = st.columns(3)
-    col1.metric("인증 시작일", first_date)
-    col2.metric("인증 종료일", last_date)
+    col1.metric("인증 시작일", formatted_first_date)
+    col2.metric("인증 종료일", formatted_last_date)
     col3.metric("전체 인증 횟수", f"{total_certifications:,}회")
 
     col4, col5, col6 = st.columns(3)
