@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 import streamlit as st
 import plotly.express as px
+import seaborn as sns
 from wordcloud import WordCloud
 from collections import Counter
 import ast
