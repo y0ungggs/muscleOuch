@@ -46,7 +46,7 @@ with st.expander("📍 기간 및 요약 통계 보기", expanded=True):
     col1, col2, col3 = st.columns(3)
     col1.metric("인증 시작일", formatted_first_date)
     col2.metric("인증 종료일", formatted_last_date)
-    col3.metric("인증 일 수", f"{days_between:,}회")
+    col3.metric("인증 일 수", f"총 {days_between:,}일")
 
     col4, col5, col6 = st.columns(3)
     col4.metric("전체 인증 횟수", f"{total_certifications:,}회")
