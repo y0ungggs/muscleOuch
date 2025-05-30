@@ -111,6 +111,7 @@ with tab2:
 
     st.subheader("7️⃣ 일자별 인증 횟수 Top 10")
     date_counts = df.groupby("날짜")["인증"].count().reset_index().sort_values("인증", ascending=False)
+    date_counts["요일"] = date_counts["날짜"].dt.day_name(locale='ko_KR')
 
     fig_date = px.bar(
         df.groupby("날짜")["인증"].count().reset_index(),
@@ -121,7 +122,7 @@ with tab2:
     st.plotly_chart(fig_date, use_container_width=True)
 
     with st.expander("📅 인증이 가장 많았던 날 Top 10"):
-        st.dataframe(date_counts.head(10).reset_index(drop=True))
+        st.dataframe(date_counts[["날짜", "요일", "인증"]].head(10).reset_index(drop=True))
 
 # -----------------------------------
 # 👥 탭 3: 사용자 중심 분석
