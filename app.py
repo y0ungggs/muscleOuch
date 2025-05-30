@@ -25,6 +25,7 @@ st.title("🏅 2025년 제1회 운동인증회 분석")
 # 사용자별 인증 통계 요약
 st.subheader("📊 사용자 인증 통계 요약")
 
+user_counts = df.groupby("이름")["인증"].sum().reset_index()
 mean_count = user_counts["인증"].mean()
 std_count = user_counts["인증"].std()
 var_count = user_counts["인증"].var()
