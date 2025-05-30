@@ -179,14 +179,14 @@ with tab5:
     st.header("🎉 참여 감사 및 안내 말씀")
 
     # 0. 많은 참여 감사 인사
-    st.write("안녕하세요. 근육통 총무 김영수 입니다!! \n처음으로 팀전으로 진행항 운동 인증회에 참여해주신 모든 동호회원분들께 진심으로 감사드립니다!\n 여러분의 꾸준한 참여가 큰 힘이 됩니다.")
+    st.info("안녕하세요. 근육통 총무 김영수 입니다!! \n처음으로 팀전으로 진행항 운동 인증회에 참여해주신 모든 동호회원분들께 진심으로 감사드립니다!\n 여러분의 꾸준한 참여가 큰 힘이 됩니다.")
 
     # 1. 3회 이상 인증한 사람의 수 및 안내
     certified_3plus = df.groupby("이름")["인증"].sum()
     certified_3plus_count = (certified_3plus >= 3).sum()
     st.subheader("1️⃣ 3회 이상 인증한 회원 수")
     st.write(f"총 {certified_3plus_count}명의 회원이 3회 이상 인증을 완료하셨습니다.")
-    st.info("해당 인원분들께는 치킨 기프티콘이 지급될 예정입니다! 그동안 열심히 운동하셨으니 즐기세요 🍗")
+    st.info("해당 인원분들께는 곧 치킨 기프티콘이 지급될 예정입니다! 그동안 열심히 운동하셨으니 즐기세요 🍗")
 
     # 2. 가장 많이 인증한 팀과 팀원 안내
     team_sum = df.groupby("팀")["인증"].sum().reset_index()
@@ -195,11 +195,11 @@ with tab5:
     top_team_cert_sum = top_team["인증"]
 
     st.subheader("2️⃣ 가장 많이 인증한 팀 및 팀원 안내")
-    st.write(f"🏆 가장 많이 인증한 팀은 **{top_team_name}팀**이며, 총 인증 횟수는 **{top_team_cert_sum}회** 입니다.")
+    st.write(f"🏆 가장 많이 인증한 팀은 **{top_team_name}**이며, 총 인증 횟수는 **{top_team_cert_sum}회** 입니다.")
 
     # 해당 팀 소속 팀원 및 인증 횟수
     top_team_members = df[df["팀"] == top_team_name].groupby("이름")["인증"].sum().reset_index().sort_values("인증", ascending=False)
-    st.write(f"**{top_team_name}팀** 소속 팀원 및 인증 횟수:")
+    st.write(f"**{top_team_name}** 소속 팀원 및 인증 횟수:")
     st.dataframe(top_team_members.rename(columns={"이름": "팀원 이름", "인증": "인증 횟수"}))
 
     st.info(
@@ -213,7 +213,7 @@ with tab5:
     if len(certified_50plus) > 0:
         st.dataframe(certified_50plus)
         st.info(
-            "50회 이상 인증한 회원 중 사다리타기를 통해 1명에게 15만원 상당의 신발 구매 지원금을 드리오니,\n"
+            "50회 이상 인증한 회원 중 이번 우승 팀 제외, 기존 블랙리스트 인원을 제외한 회원만 사다리타기를 통해 1명에게 15만원 상당의 신발 구매 지원금을 드리오니,\n"
             "신발을 고른 후 이메일 또는 사내 메신저로 개별 연락 바랍니다.😄"
         )
     else:
