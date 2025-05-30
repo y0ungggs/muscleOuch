@@ -161,3 +161,6 @@ with tab4:
     user_counts = df.groupby(["팀", "이름"])["인증"].count().reset_index()
     fig_box = px.box(user_counts, x="팀", y="인증", points="all", color="팀", title="팀별 인증 분포")
     st.plotly_chart(fig_box, use_container_width=True)
+
+    with st.expander("📋 Raw Data 보기"):
+        st.dataframe(df)
