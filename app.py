@@ -163,4 +163,13 @@ with tab4:
     st.plotly_chart(fig_box, use_container_width=True)
 
     with st.expander("📋 Raw Data 보기"):
-        st.dataframe(df)
+        name_filter = st.text_input("이름으로 필터링", "")
+        
+        if name_filter.strip():
+        filtered_df = df[df["이름"].str.contains(name_filter.strip(), case=False, na=False)]
+        
+        else:
+            filtered_df = df
+            
+        show_columns = ["날짜", "팀", "이름", "인증"]
+        st.dataframe(filtered_df[show_columns])
