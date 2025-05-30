@@ -49,9 +49,9 @@ with st.expander("📍 기간 및 요약 통계 보기", expanded=True):
     col3.metric("인증 일 수", f"{days_between:,}회")
 
     col4, col5, col6 = st.columns(3)
-    col3.metric("전체 인증 횟수", f"{total_certifications:,}회")
-    col4.metric("평균 인증 수", f"{mean_count:.2f}회")
-    col5.metric("표준편차", f"{std_count:.2f}")
+    col4.metric("전체 인증 횟수", f"{total_certifications:,}회")
+    col5.metric("평균 인증 수", f"{mean_count:.2f}회")
+    col6.metric("표준편차", f"{std_count:.2f}")
 
 # -----------------------------------
 # 🔽 주요 분석 탭
