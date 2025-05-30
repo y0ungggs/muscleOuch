@@ -20,7 +20,7 @@ file_url = 'https://github.com/y0ungggs/muscleOuch/raw/main/data/%EC%A0%9C1%ED%9
 df = pd.read_excel(file_url, engine='openpyxl')
 
 
-st.title("🏅 2025년 제1회 운동인증회 분석")
+st.title("🏅 2025년 제1회 운동인증회 결과")
 
 # 동호회원별 인증 통계 요약
 st.subheader("📊 동호회원 인증 통계 요약")
@@ -34,9 +34,10 @@ total_certifications = len(df)
 first_date = df["날짜"].min().date()
 last_date = df["날짜"].max().date()
 
+st.write(f"🔹 기간 : {first_date} ~ {last_date}")
+st.write(f"🔹 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회")
 st.write(f"🔹 평균 인증 횟수: {mean_count:.2f}회")
 st.write(f"🔹 표준편차: {std_count:.2f}")
-st.write(f"🔹 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회")
 
 # --- 데이터 전처리 예시 ---
 # 날짜 컬럼 datetime 변환
@@ -44,14 +45,6 @@ df["날짜"] = pd.to_datetime(df["날짜"])
 df["요일"] = df["날짜"].dt.dayofweek.map(
     {0: "월", 1: "화", 2: "수", 3: "목", 4: "금", 5: "토", 6: "일"}
 )
-
-# 팀명과 이름 컬럼은 상황에 맞게 이름 바꾸기
-# 예: df.rename(columns={"팀명_컬럼명": "팀명", "이름_컬럼명": "이름"}, inplace=True)
-
-
-
-st.markdown(f"**2025년 제1회 운동 인증회 전체 인증 횟수: {first_date} ~ {last_date} : {total_certifications:,}회**")
-
 
 # --------------------------------------------------
 # 1. 팀별 누적 인증 횟수 그래프
