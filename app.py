@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 import streamlit as st
 import plotly.express as px
-import seaborn as sns
 from wordcloud import WordCloud
 from collections import Counter
 import ast
@@ -22,6 +21,17 @@ df = pd.read_excel(file_url, engine='openpyxl')
 
 
 st.title("🏅 2025년 제1회 운동인증회 분석")
+
+# 사용자별 인증 통계 요약
+st.subheader("📊 사용자 인증 통계 요약")
+
+mean_count = user_counts["인증"].mean()
+std_count = user_counts["인증"].std()
+var_count = user_counts["인증"].var()
+
+st.write(f"🔹 평균 인증 횟수: {mean_count:.2f}회")
+st.write(f"🔹 표준편차: {std_count:.2f}")
+st.write(f"🔹 분산: {var_count:.2f}")
 
 # --- 데이터 전처리 예시 ---
 # 날짜 컬럼 datetime 변환
@@ -176,9 +186,36 @@ fig8.add_vline(x=median_val, line_dash="dot", line_color="green",
 
 st.plotly_chart(fig8)
 
+# --------------------------------------------------
+# Z-score 계산
+user_counts["z_score"] = (user_counts["인증"] - mean_count) / std_count
+
+# z-score가 높은 순으로 상위 사용자 정렬
+top_z = user_counts.sort_values("z_score", ascending=False)
+st.subheader("🔥 Z-score 기준 상위 사용자 TOP 5")
+st.dataframe(top_z.head(5)[["이름", "인증", "z_score"]])
+
+fig_z = px.bar(top_z.head(10), x="이름", y="z_score",
+               color="z_score",
+               color_continuous_scale="blues",
+               title="Z-score 상위 사용자 TOP 10",
+               labels={"z_score": "Z-score", "이름": "사용자"})
+
+st.plotly_chart(fig_z)
 
 
+# --------------------------------------------------
+# 팀별 사용자 인증 횟수 Boxplot
+st.subheader("📦 팀별 사용자 인증 횟수 Boxplot")
 
+# 사용자별 인증 횟수 데이터가 있어야 함
+user_counts = df.groupby(["팀", "이름"])["인증"].sum().reset_index()
+
+fig_box = px.box(user_counts, x="팀", y="인증", points="all", color="팀",
+                 title="팀별 사용자 인증 횟수 분포 (Boxplot)",
+                 labels={"팀": "팀", "인증": "사용자별 인증 횟수"})
+
+st.plotly_chart(fig_box)
 
 
 
