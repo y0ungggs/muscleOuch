@@ -161,12 +161,12 @@ st.subheader("11. 사용자별 인증 횟수 분포")
 
 user_counts = df.groupby("이름")["인증"].sum().reset_index()
 
-fig8, ax = plt.subplots()
-sns.histplot(user_counts["인증"], kde=True, bins=10, ax=ax, color="#4A90E2")
-ax.set_title("인증 횟수 분포 (히스토그램 + KDE)")
-ax.set_xlabel("인증 횟수")
-ax.set_ylabel("사용자 수")
-st.pyplot(fig8)
+fig8 = px.histogram(user_counts, x="인증", nbins=20, marginal="rug",
+                    title="사용자별 인증 횟수 분포 (히스토그램)",
+                    labels={"인증": "인증 횟수", "count": "사용자 수"},
+                    color_discrete_sequence=["#4A90E2"])
+
+st.plotly_chart(fig8)
 
 
 
