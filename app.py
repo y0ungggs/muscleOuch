@@ -34,6 +34,7 @@ first_date = df["날짜"].min().date()
 formatted_first_date = first_date.strftime("%Y-%m-%d")
 last_date = df["날짜"].max().date()
 formatted_last_date = last_date.strftime("%Y-%m-%d")
+days_between = (last_date - first_date).days
 
 # -----------------------------------
 # 🏅 타이틀
@@ -45,12 +46,12 @@ with st.expander("📍 기간 및 요약 통계 보기", expanded=True):
     col1, col2, col3 = st.columns(3)
     col1.metric("인증 시작일", formatted_first_date)
     col2.metric("인증 종료일", formatted_last_date)
-    col3.metric("전체 인증 횟수", f"{total_certifications:,}회")
+    col3.metric("인증 일 수", f"{days_between:,}회")
 
     col4, col5, col6 = st.columns(3)
-    col4.metric("평균 인증", f"{mean_count:.2f}회")
+    col3.metric("전체 인증 횟수", f"{total_certifications:,}회")
+    col4.metric("평균 인증 수", f"{mean_count:.2f}회")
     col5.metric("표준편차", f"{std_count:.2f}")
-    col6.metric("분산", f"{var_count:.2f}")
 
 # -----------------------------------
 # 🔽 주요 분석 탭
@@ -179,7 +180,7 @@ with tab5:
     st.header("🎉 참여 감사 및 안내 말씀")
 
     # 0. 많은 참여 감사 인사
-    st.info("안녕하세요. 근육통 총무 김영수 입니다!!  \n처음으로 팀전으로 진행항 운동 인증회에 참여해주신 모든 동호회원분들께 진심으로 감사드립니다!  \n동호회원분들의 꾸준한 참여가 큰 힘이 됩니다.")
+    st.info("안녕하세요. 근육통 총무 김영수 입니다!!  \n처음으로 팀전으로 진행한 운동 인증회에 참여해주신 모든 동호회원분들께 진심으로 감사드립니다!  \n동호회원분들의 꾸준한 참여가 큰 힘이 됩니다.")
 
     # 1. 3회 이상 인증한 사람의 수 및 안내
     certified_3plus = df.groupby("이름")["인증"].sum()
@@ -203,8 +204,8 @@ with tab5:
     st.dataframe(top_team_members.rename(columns={"이름": "팀원 이름", "인증": "인증 횟수"}))
 
     st.info(
-        "※ 위 팀원분들께는 6월 13일까지 15만원 상당의 신발 구매 지원금을 드리오니,  \n신발을 고른 후 이메일 또는 사내 메신저로 개별 연락 바랍니다.(DT사업팀 김영수 주임)😄  \n"
-        "※ 단, '박채은'회원님은 블랙리스트에 올랐으므로 5만원 상당의 운동용품 구매 지원금을 지급합니다.🤭"
+        "※ 위 팀원분들께는 15만원 상당의 신발 구매 지원금을 드립니다.😄  \n"
+        "※ 단, 이전 블랙리스트에 포함된 '박채은'회원님은 5만원 상당의 운동용품 구매 지원금을 드립니다.🤭"
     )
 
     # 3. 50회 이상 인증 회원 및 사다리타기 안내
@@ -214,7 +215,7 @@ with tab5:
         st.dataframe(certified_50plus)
         st.info(
             "50회 이상 인증한 회원 중 사다리타기를 통해 1명에게 15만원 상당의 신발 구매 지원금을 드립니다.😄  \n"
-            "🙏이번 우승 팀 및 기존 블랙리스트 인원을 제외하였습니다."
+            "🙏이번 우승 팀원과 기존 블랙리스트 회원을 제외합니다."
         )
         st.info(
             "사다리타기 대상자: 고한솔, 박운학, 윤균성, 장명기, 장서혁, 장선우, 장창수  \n"   
@@ -226,9 +227,9 @@ with tab5:
     # 4. 하반기 이벤트 참여 독려
     st.subheader("4️⃣ 투 비 컨티뉴")
     st.info(
-        "부족한 점을 보완하여 하반기 이벤트를 준비하겠습니다.  \n"
+        "하반기에는 부족한 점을 보완하여 준비하겠습니다.  \n"
         "다음에도 많은 관심과 참여 부탁드립니다!  \n"
-        "더욱 다양한 이벤트와 풍성한 상품으로 찾아뵙겠습니다. 건강하세요🙇‍♀️"
+        "곧 다시 또 찾아뵙겠습니다. 건강하세요🙇‍♀️"
     )
 
 
