@@ -172,3 +172,59 @@ with tab4:
             
         show_columns = ["날짜", "팀", "이름", "인증"]
         st.dataframe(filtered_df[show_columns])
+
+# -----------------------------------
+# 📈 탭 5: 최종 집계
+with tab5:
+    st.header("🎉 참여 감사 및 안내 말씀")
+
+    # 0. 많은 참여 감사 인사
+    st.write("안녕하세요. 근육통 총무 김영수 입니다!! \n처음으로 팀전으로 진행항 운동 인증회에 참여해주신 모든 동호회원분들께 진심으로 감사드립니다!\n 여러분의 꾸준한 참여가 큰 힘이 됩니다.")
+
+    # 1. 3회 이상 인증한 사람의 수 및 안내
+    certified_3plus = df.groupby("이름")["인증"].sum()
+    certified_3plus_count = (certified_3plus >= 3).sum()
+    st.subheader("1️⃣ 3회 이상 인증한 회원 수")
+    st.write(f"총 {certified_3plus_count}명의 회원이 3회 이상 인증을 완료하셨습니다.")
+    st.info("해당 인원분들께는 치킨 기프티콘이 지급될 예정입니다! 그동안 열심히 운동하셨으니 즐기세요 🍗")
+
+    # 2. 가장 많이 인증한 팀과 팀원 안내
+    team_sum = df.groupby("팀")["인증"].sum().reset_index()
+    top_team = team_sum.sort_values("인증", ascending=False).iloc[0]
+    top_team_name = top_team["팀"]
+    top_team_cert_sum = top_team["인증"]
+
+    st.subheader("2️⃣ 가장 많이 인증한 팀 및 팀원 안내")
+    st.write(f"🏆 가장 많이 인증한 팀은 **{top_team_name}팀**이며, 총 인증 횟수는 **{top_team_cert_sum}회** 입니다.")
+
+    # 해당 팀 소속 팀원 및 인증 횟수
+    top_team_members = df[df["팀"] == top_team_name].groupby("이름")["인증"].sum().reset_index().sort_values("인증", ascending=False)
+    st.write(f"**{top_team_name}팀** 소속 팀원 및 인증 횟수:")
+    st.dataframe(top_team_members.rename(columns={"이름": "팀원 이름", "인증": "인증 횟수"}))
+
+    st.info(
+        "※ 해당 팀원분들께는 6월 13일까지 15만원 상당의 신발 구매 지원금을 드리오니, 신발을 고른 후 이메일 또는 사내 메신저로 개별 연락 바랍니다.(DT사업팀 김영수 주임)😄\n\n"
+        "※ 단, '박채은'회원님은 블랙리스트에 올랐으므로 5만원 상당의 운동용품 구매 지원금을 지급합니다.🤭"
+    )
+
+    # 3. 50회 이상 인증 회원 및 사다리타기 안내
+    certified_50plus = certified_3plus[certified_3plus >= 50].reset_index().rename(columns={"이름": "회원명", "인증": "인증 횟수"})
+    st.subheader("3️⃣ 50회 이상 인증한 회원 명단")
+    if len(certified_50plus) > 0:
+        st.dataframe(certified_50plus)
+        st.info(
+            "50회 이상 인증한 회원 중 사다리타기를 통해 1명에게 15만원 상당의 신발 구매 지원금을 드리오니,\n"
+            "신발을 고른 후 이메일 또는 사내 메신저로 개별 연락 바랍니다.😄"
+        )
+    else:
+        st.write("50회 이상 인증한 회원이 없습니다.")
+
+    # 4. 하반기 이벤트 참여 독려
+    st.subheader("4️⃣ 하반기 이벤트 안내 및 참여 독려")
+    st.write(
+        "부족한 점을 보완하여 하반기 이벤트를 준비하겠습니다.\n
+        다음에도 많은 관심과 참여 부탁드립니다!"
+        "더욱 다양한 이벤트와 풍성한 상품으로 찾아뵙겠습니다. 건강하세요🙇‍♀️! 🎉"
+    )
+
+
