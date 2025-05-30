@@ -65,15 +65,7 @@ with tab1:
     fig1 = px.bar(team_counts, x="팀", y="인증", title="팀별 누적 인증 횟수", labels={"인증": "횟수"})
     st.plotly_chart(fig1, use_container_width=True)
 
-    st.subheader("2️⃣ 개인별 누적 인증 횟수")
-    df_person = df.groupby(["팀", "이름"])["인증"].sum().reset_index().sort_values(["팀", "인증"], ascending=[True, False])
-    fig2 = px.bar(df_person, x="이름", y="인증", color="팀", title="개인별 누적 인증", labels={"이름": "동호회원"})
-    st.plotly_chart(fig2, use_container_width=True)
-
-    with st.expander("📋 개인별 인증 표 보기"):
-        st.dataframe(df_person)
-
-    st.subheader("3️⃣ 날짜별 팀별 누적 인증 추이")
+    st.subheader("2️⃣ 날짜별 팀별 누적 인증 추이")
     team_daily_counts = df.groupby(["날짜", "팀"])["인증"].sum().reset_index()
     team_daily_counts["누적인증"] = team_daily_counts.groupby("팀")["인증"].cumsum()
     
@@ -86,6 +78,14 @@ with tab1:
         labels={"날짜": "날짜", "누적인증": "누적 인증 횟수", "팀": "팀"}
     )
     st.plotly_chart(fig3, use_container_width=True)
+
+    st.subheader("3️⃣ 개인별 누적 인증 횟수")
+    df_person = df.groupby(["팀", "이름"])["인증"].sum().reset_index().sort_values(["팀", "인증"], ascending=[True, False])
+    fig2 = px.bar(df_person, x="이름", y="인증", color="팀", title="개인별 누적 인증", labels={"이름": "동호회원"})
+    st.plotly_chart(fig2, use_container_width=True)
+
+    with st.expander("📋 개인별 인증 표 보기"):
+        st.dataframe(df_person)
 
 # -----------------------------------
 # 📅 탭 2: 날짜 기반 분석
