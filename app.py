@@ -12,6 +12,8 @@ from wordcloud import WordCloud
 from collections import Counter
 import ast
 import os
+import standard_imghdr as imghdr
+
 
 font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Pretendard-Light.ttf')
 # st.write("폰트 경로:", font_path)
@@ -252,5 +254,6 @@ with tab5:
         "늘 건강하세요🙋‍♂️"
     )
     st.write("BAND 링크: https://www.band.us/band/74690866")
+
 
 
